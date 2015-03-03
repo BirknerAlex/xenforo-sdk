@@ -137,7 +137,7 @@ class XenForoSDK
 			return new \XenForo_Phrase('please_enter_name_that_does_not_resemble_an_email_address');
 		}
 
-		$existingUser = \XenForo_Model::create('\XenForo_Model_User')->getUserByName($username);
+		$existingUser = \XenForo_Model::create('XenForo_Model_User')->getUserByName($username);
 		if($existingUser && (!$userId || ($userId && $userId != $existingUser['user_id']))) {
 			return new \XenForo_Phrase('usernames_must_be_unique');
 		}
@@ -146,7 +146,7 @@ class XenForoSDK
 		$romanized = utf8_deaccent(utf8_romanize($username));
 		if ($romanized != $username)
 		{
-			$existingUser = \XenForo_Model::create('\XenForo_Model_User')->getUserByName($romanized);
+			$existingUser = \XenForo_Model::create('XenForo_Model_User')->getUserByName($romanized);
 			if($existingUser && (!$userId || ($userId && $userId != $existingUser['user_id']))) {
 				return new \XenForo_Phrase('usernames_must_be_unique');
 			}
@@ -155,12 +155,16 @@ class XenForoSDK
 		return true;
 	}
 
+    public function getUserByName($username) {
+        return \XenForo_Model::create('XenForo_Model_User')->getUserByName($username);
+    }
+
 	public function verifyEmail($email, $userId=null) {
 		if(!\Zend_Validate::is($email, 'EmailAddress')) {
 			return new \XenForo_Phrase('please_enter_valid_email');
 		}
 
-		$existingUser = \XenForo_Model::create('\XenForo_Model_User')->getUserByEmail($email);
+		$existingUser = \XenForo_Model::create('XenForo_Model_User')->getUserByEmail($email);
 		if($existingUser && (!$userId || ($userId && $userId != $existingUser['user_id']))) {
 			return new \XenForo_Phrase('email_addresses_must_be_unique');
 		}
@@ -223,7 +227,7 @@ class XenForoSDK
 
 		// Verify Password
 		$userPassword = $this->setPassword($password);
-		if(is_object($userPassword) && get_class($userPassword) == '\XenForo_Phrase') {
+		if(is_object($userPassword) && get_class($userPassword) == 'XenForo_Phrase') {
 			return $userPassword;
 		}
 
@@ -231,7 +235,7 @@ class XenForoSDK
 		$username = str_replace(' ', '_', $username);
  
 		// Create writer object
-		$writer = \XenForo_DataWriter::create('\XenForo_DataWriter_User');
+		$writer = \XenForo_DataWriter::create('XenForo_DataWriter_User');
 		$info = array_merge($additional, array(
 			'username' => $username,
 			'email' => $email,
@@ -259,7 +263,7 @@ class XenForoSDK
 		\XenForo_Model_Ip::log($user['user_id'], 'user', $user['user_id'], 'register');
 
 		if ($user['user_state'] == 'email_confirm') {
-			\XenForo_Model::create('\XenForo_Model_UserConfirmation')->sendEmailConfirmation($user);
+			\XenForo_Model::create('XenForo_Model_UserConfirmation')->sendEmailConfirmation($user);
 		}
 
 		return $user['user_id'];
@@ -267,8 +271,8 @@ class XenForoSDK
 
 	public function validateLogin($email, $password, $remember=false, $doLogin=false) {
 		// Init
-		$loginModel = \XenForo_Model::create('\XenForo_Model_Login');
-		$userModel = \XenForo_Model::create('\XenForo_Model_User');
+		$loginModel = \XenForo_Model::create('XenForo_Model_Login');
+		$userModel = \XenForo_Model::create('XenForo_Model_User');
 		$hasError = null;
 
 		// Validate user info
@@ -292,7 +296,7 @@ class XenForoSDK
 	}
 
 	public function login($user, $remember=false) {
-		$userModel = \XenForo_Model::create('\XenForo_Model_User');
+		$userModel = \XenForo_Model::create('XenForo_Model_User');
 
 		// Set cookie if needed
 		if($remember) {
@@ -308,7 +312,7 @@ class XenForoSDK
 		$this->getSession()->changeUserId($user);
 		$this->getVisitor()->setup($user);
 
-		return $user;
+		return true;
 	}
 
 	public function adminLogout() {
@@ -329,7 +333,7 @@ class XenForoSDK
 		}
 
 		// Logout user
-		\XenForo_Model::create('\XenForo_Model_Session')->processLastActivityUpdateForLogOut($this->getVisitor()->getUserId());
+		\XenForo_Model::create('XenForo_Model_Session')->processLastActivityUpdateForLogOut($this->getVisitor()->getUserId());
 		$this->getSession()->delete();
 
 		\XenForo_Helper_Cookie::deleteAllCookies(array('session'), array('user' => array('httpOnly' => false)));
