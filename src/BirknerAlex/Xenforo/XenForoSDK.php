@@ -12,7 +12,7 @@ namespace BirknerAlex\Xenforo;
 class XenForoSDK
 {
 	public function __construct($xenForoInstallation) {
-        if (is_dir($xenForoInstallation)) {
+        if (!is_dir($xenForoInstallation)) {
             throw new \Exception('XenForo "'.$xenForoInstallation.'" directory not found.');
         }
 
