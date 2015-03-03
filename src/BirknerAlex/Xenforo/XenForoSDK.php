@@ -1,5 +1,7 @@
 <?php
 
+namespace BirknerAlex\Xenforo;
+
 defined('XF_ROOT') or define('XF_ROOT', dirname(__FILE__));
 
 /**
