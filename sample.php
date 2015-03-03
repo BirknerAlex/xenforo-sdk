@@ -1,6 +1,7 @@
 <?php
 
-require_once('XenForoSDK.php');
+require 'vendor/autoload.php';
+
 $sdk = new XenForoSDK;
 
 $loggedIn = $sdk->isLoggedIn();
