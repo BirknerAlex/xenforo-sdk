@@ -2,8 +2,6 @@
 
 namespace BirknerAlex\Xenforo;
 
-defined('XF_ROOT') or define('XF_ROOT', dirname(__FILE__));
-
 /**
  * XenForo SDK
  * 
@@ -13,14 +11,17 @@ defined('XF_ROOT') or define('XF_ROOT', dirname(__FILE__));
  */
 class XenForoSDK
 {
-	public function __construct() {
+	public function __construct($xenForoInstallation) {
+        if (is_dir($xenForoInstallation)) {
+            throw new \Exception('XenForo "'.$xenForoInstallation.'" directory not found.');
+        }
+
 		$startTime = microtime(true);
-		$fileDir = XF_ROOT;
 
-		require($fileDir . '/library/XenForo/Autoloader.php');
-		\XenForo_Autoloader::getInstance()->setupAutoloader($fileDir . '/library');
+		require($xenForoInstallation . '/library/XenForo/Autoloader.php');
+		\XenForo_Autoloader::getInstance()->setupAutoloader($xenForoInstallation . '/library');
 
-		\XenForo_Application::initialize($fileDir . '/library', $fileDir);
+		\XenForo_Application::initialize($xenForoInstallation . '/library', $xenForoInstallation);
 		\XenForo_Application::set('page_start_time', $startTime);
 		\XenForo_Session::startPublicSession();
 	}
@@ -154,10 +155,6 @@ class XenForoSDK
 
 		return true;
 	}
-
-    public function getUserByName($username) {
-        return \XenForo_Model::create('XenForo_Model_User')->getUserByName($username);
-    }
 
 	public function verifyEmail($email, $userId=null) {
 		if(!\Zend_Validate::is($email, 'EmailAddress')) {

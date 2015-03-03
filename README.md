@@ -27,7 +27,7 @@ You can install via composer:
 <?php
 
 require 'vendor/autoload.php';
-$sdk = new XenForoSDK;
+$sdk = new XenForoSDK('/path/to/xenforo/installation/');
 ```
 
 For usage samples take a look into the sample.php file.
