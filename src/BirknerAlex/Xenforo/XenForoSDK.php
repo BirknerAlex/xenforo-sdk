@@ -52,7 +52,7 @@ class XenForoSDK
 	}
 
 	public function isLoggedIn() {
-		return $this->getVisitor()->getUserId();
+		return (bool)$this->getVisitor()->getUserId();
 	}
 
 	public function verifyUsername($username, $userId=null) {
